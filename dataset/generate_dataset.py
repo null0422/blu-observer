@@ -4,6 +4,9 @@ from capture.har import Har
 from database.observer import Observer
 from database.site import Site
 
+
+f = open('list.txt', 'w')
+
 COUNTRIES = ['KR', 'US', 'VN', 'ID']
 
 har = Har()
@@ -67,11 +70,14 @@ def capture(url):
           label_f.append(info)
     else:
       label_t.append(info)
+          
+  f.close()
+      
 
   label['label_t'] = label_t
   label['label_f'] = label_f
   print(label)
-
+  f.write(label)
   # har.clear("facebook.com")
 
 def main():
