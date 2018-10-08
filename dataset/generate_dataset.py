@@ -3,17 +3,26 @@ from urllib.parse import urlparse
 from capture.har import Har
 from database.observer import Observer
 from database.site import Site
+import json
+from os.path import splitext
+import pickle
 
-
-COUNTRIES = ['KR', 'US', 'VN', 'ID']
+# COUNTRIES = ['KR', 'US', 'VN', 'ID']
+COUNTRIES = ['VN']
 
 har = Har()
 observer = Observer()
 site = Site()
 
+file = open('label2.bin', 'wb')
 
 def capture(url):
-  origin = get_fld('http://%s' % url)
+
+
+  origin = get_fld('http://%s' % url, fail_silently=True)
+  if origin is None:
+    print("error: TldDomainNotFount")
+    pass
   # print(origin)
 
   label = {
@@ -38,12 +47,25 @@ def capture(url):
 
     req = entry['request']
     url = req['url']
-    req_origin = get_fld(url)
+    req_origin = get_fld(url, fail_silently=True)
+
+    if req_origin is None:
+      print("error: TldDomainNotFount")
+      pass
+
+    print(url)
+
+    # print(req_origin)
 
     u = urlparse(url)
     info['sub_domain'] = u.netloc
     info['path'] = u.path
     info['query_string'] = req.get('queryString', {})
+
+    e_path = u.path
+    ext = splitext(e_path)[1]
+    # print(ext)
+
 
     if origin != req_origin:
       # print('req_origin', req_origin)
@@ -68,26 +90,37 @@ def capture(url):
           label_f.append(info)
     else:
       label_t.append(info)
-      
 
   label['label_t'] = label_t
   label['label_f'] = label_f
   print(label)
+  # f.write(str(label)+'\n')
+
+  pickle.dump(label, file)
+  # f.write(url)
+
 
   # har.clear("facebook.com")
 
 def main():
   for c in COUNTRIES:
     offset = 0
-    limit = 100
-    while True:
-      sites = site.get_sites(country=c, src='blu', offset=offset, limit=limit)
+    limit = 1000
+    # while True:
+    sites = site.get_sites(country=c, src='blu', offset=offset, limit=limit)
 
-      if len(sites) == 0:
-        break
+    if len(sites) == 0:
+      break
+    cnt=0
+    for s in sites:
 
-      for s in sites:
-        capture(s['domain'])
+      print(cnt)
+      capture(s['domain'])
+      cnt += 1
+
+
+
+
 
 
 if __name__ == '__main__':
