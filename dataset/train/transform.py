@@ -13,12 +13,17 @@ class Transform(object):
 
   def clean(self, data):
     sentence = []
+    p = []
     sub_domain = data.get('sub_domain', None)
     sub_domain_name = self.urlUtil.remove_tld(sub_domain)
     sub_domain_name = self.split_in_string(sub_domain_name)
     # print(sub_domain_name)
     sentence.extend(sub_domain_name)
     path = data.get('path', None)
+
+
+    label = data.get('label')
+
     path = path.lower()
     # self.normalize(path)
     # sentence.extend(path.split('/'))
@@ -28,7 +33,7 @@ class Transform(object):
       paths = self.remove_value(paths)
       paths = self.split_in_list(paths)
       # print(paths)
-      sentence.extend(paths)
+      p.extend(paths)
 
     sentence = list(filter(None, sentence))
     sentence = list(set(sentence))
