@@ -13,6 +13,7 @@ class Transform(object):
 
   def clean(self, data):
     sentence = []
+    label = data.get('label')
     sub_domain = data.get('sub_domain', None)
     sub_domain_name = self.urlUtil.remove_tld(sub_domain)
     sub_domain_name = self.split_in_string(sub_domain_name)
@@ -36,6 +37,8 @@ class Transform(object):
     self.remove_except_keywords(sentence)
     self.remove_symbol(sentence)
     sentence = self.remove_single_char(sentence)
+    sentence.insert(0,label)
+    # print(sentence)
     return sentence
 
   def remove_single_char(self, data):
