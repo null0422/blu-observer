@@ -20,6 +20,7 @@ def make_text(data):
   for i in range(1,len(text)):
     txt = txt + ' ' + text[i]
 
+
   return txt
 
 def generate():
@@ -36,7 +37,8 @@ def generate():
         for d in data:
           t = make_text(d)
           print(t)
-          f.write(t+'\n')
+
+          f.write(t + '\n')
 
         offset = offset + limit
 
